@@ -1,138 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="NASA Space Explorer — discover breathtaking images from NASA's archive."
+    />
+    <title>NASA Space Explorer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="Style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <a class="brand" href="#" aria-label="NASA Space Explorer home">
+          <img
+            class="brand-logo"
+            src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=200&q=80"
+            alt="NASA logo"
+          />
+          <span>NASA Space Explorer</span>
+        </a>
+        <p class="header-tagline">Browse space photography & mission highlights</p>
+      </header>
 
-// =================================
-// 1. Register Service Worker
-// =================================
+      <main class="hero">
+        <p class="eyebrow">Deep Space Discovery</p>
+        <h1>Explore the <span>cosmos</span> through NASA imagery.</h1>
+        <p class="intro">
+          Search date ranges, uncover historic discoveries, and continue exploring
+          even when your connection drops.
+        </p>
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      const registration =
-        await navigator.serviceWorker.register(
-          "./service-worker.js"
-        );
+        <form class="search-panel" aria-label="Search NASA images by date range">
+          <div class="date-controls">
+            <label for="startDate">Start date</label>
+            <input id="startDate" name="startDate" type="date" />
+          </div>
 
-      console.log(
-        "Service Worker registered successfully!",
-        registration
-      );
-    } catch (error) {
-      console.error(
-        "Service Worker registration failed:",
-        error
-      );
-    }
-  });
-}
+          <div class="date-separator" aria-hidden="true">→</div>
 
+          <div class="date-controls">
+            <label for="endDate">End date</label>
+            <input id="endDate" name="endDate" type="date" />
+          </div>
 
-// =================================
-// 2. Offline Indicator
-// =================================
+          <button type="submit">
+            <span>Browse</span>
+            <span class="button-arrow" aria-hidden="true">→</span>
+          </button>
 
-const offlineStatus =
-  document.getElementById("offlineStatus");
+          <p class="range-hint">Use a date range up to 30 days for best results.</p>
+        </form>
 
-function updateOnlineStatus() {
-  if (offlineStatus) {
-    offlineStatus.hidden = navigator.onLine;
-  }
-}
+        <div class="utility-actions" aria-live="polite">
+          <div id="offlineStatus" class="offline-status" hidden>
+            You are offline. Cached content is still available.
+          </div>
 
-window.addEventListener("online", updateOnlineStatus);
-window.addEventListener("offline", updateOnlineStatus);
+          <div class="install-row">
+            <button id="installButton" type="button" hidden>Install App</button>
+            <button id="notificationButton" type="button">Enable Alerts</button>
+          </div>
+        </div>
+      </main>
 
-updateOnlineStatus();
+      <section class="results-section" aria-live="polite">
+        <div class="results-heading">
+          <h2>Latest discoveries</h2>
+          <p class="status">Ready for new missions</p>
+        </div>
 
+        <p class="random-fact">
+          <strong>Did you know?</strong>
+          The James Webb Space Telescope is observing the universe in infrared to
+          reveal hidden details of distant galaxies.
+        </p>
 
-// =================================
-// 3. Custom Install Prompt
-// =================================
+        <div class="gallery" id="gallery">
+          <article class="card">
+            <a class="image-link" href="#" aria-label="View Mars landscape">
+              <img
+                src="https://images.unsplash.com/photo-1502134249126-9f3755a50d78?auto=format&fit=crop&w=900&q=80"
+                alt="Mars surface"
+              />
+            </a>
+            <div class="card-content">
+              <p class="card-date">May 27, 2026</p>
+              <h3 class="card-title">Mars dust storms</h3>
+              <p class="explanation">
+                A dusty horizon sweeps across the Martian terrain as the spacecraft
+                captures evidence of shifting weather patterns and atmospheric
+                movement.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
 
-let deferredPrompt;
-
-const installButton =
-  document.getElementById("installButton");
-
-window.addEventListener("beforeinstallprompt", (event) => {
-  event.preventDefault();
-
-  deferredPrompt = event;
-
-  if (installButton) {
-    installButton.hidden = false;
-  }
-});
-
-if (installButton) {
-  installButton.addEventListener("click", async () => {
-    if (!deferredPrompt) return;
-
-    deferredPrompt.prompt();
-
-    const choice = await deferredPrompt.userChoice;
-
-    console.log("Install choice:", choice.outcome);
-
-    deferredPrompt = null;
-    installButton.hidden = true;
-  });
-}
-
-window.addEventListener("appinstalled", () => {
-  if (installButton) {
-    installButton.hidden = true;
-  }
-
-  console.log("NASA Space Explorer installed!");
-});
-
-
-// =================================
-// 4. Notification Permission
-// =================================
-
-const notificationButton =
-  document.getElementById("notificationButton");
-
-if (notificationButton) {
-  notificationButton.addEventListener("click", async () => {
-
-    if (!("Notification" in window)) {
-      alert("Notifications are not supported.");
-      return;
-    }
-
-    if (!("serviceWorker" in navigator)) {
-      alert("Service Workers are not supported.");
-      return;
-    }
-
-    try {
-      const permission =
-        await Notification.requestPermission();
-
-      if (permission === "granted") {
-
-        const registration =
-          await navigator.serviceWorker.ready;
-
-        await registration.showNotification(
-          "NASA Space Explorer",
-          {
-            body: "Welcome! Your space exploration journey begins.",
-            icon: "./icons/icon-192.png",
-            badge: "./icons/icon-192.png"
-          }
-        );
-
-        alert("Notification enabled successfully!");
-
-      } else {
-        alert("Notification permission was not granted.");
-      }
-
-    } catch (error) {
-      console.error("Notification error:", error);
-    }
-  });
-}
+    <script src="Script.js"></script>
+  </body>
+</html>
