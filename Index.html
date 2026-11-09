@@ -59,16 +59,22 @@
           <p class="range-hint">Use a date range up to 30 days for best results.</p>
         </form>
 
-        <div class="utility-actions" aria-live="polite">
-          <div id="offlineStatus" class="offline-status" hidden>
-            You are offline. Cached content is still available.
+        <section class="utility-actions" aria-label="App availability and settings">
+          <!-- Offline Status -->
+          <div id="offlineStatus" class="offline-status" role="status" aria-live="polite" hidden>
+            You are offline. Showing available saved content.
           </div>
 
-          <div class="install-row">
-            <button id="installButton" type="button" hidden>Install App</button>
-            <button id="notificationButton" type="button">Enable Alerts</button>
-          </div>
-        </div>
+          <!-- Install Application -->
+          <button id="installButton" type="button" hidden>
+            Install NASA Space Explorer
+          </button>
+
+          <!-- Notification Permission -->
+          <button id="notificationButton" type="button">
+            Enable Notifications
+          </button>
+        </section>
       </main>
 
       <section class="results-section" aria-live="polite">
